@@ -181,7 +181,7 @@ int Swap(vector<int> &solucao, int custoInicial){
 
 int Reinsercao(vector<int> &solucao, int custoInicial, int tamanhoDoBloco){
 	int custoAtual = custoInicial, custoRetirado = 0, custoInserido = 0;
-	int numeroDeIteracoes = dimension - 2, numeroDeSwaps = dimension - 1;
+	int numeroDeIteracoes =  dimension - tamanhoDoBloco -1, numeroDeSwaps = dimension - 1 - tamanhoDoBloco;
 	bool ehMelhor = false;
 	tSwap posicoes;
 
@@ -190,9 +190,9 @@ int Reinsercao(vector<int> &solucao, int custoInicial, int tamanhoDoBloco){
 
 	//cout << "entrei reinsercao com susto: " << custoInicial << endl;
 
-	for(int i = 1; i < dimension - tamanhoDoBloco -1; i++){
+	for(int i = 1; i < numeroDeIteracoes; i++){
 		custoRetirado = matrizAdj[solucao[i-1]][solucao[i+tamanhoDoBloco]] - matrizAdj[solucao[i-1]][solucao[i]] - matrizAdj[solucao[i+tamanhoDoBloco]][solucao[i+tamanhoDoBloco-1]];
-		for(int j = i + tamanhoDoBloco; j < dimension - 1 - tamanhoDoBloco; j++){
+		for(int j = i + tamanhoDoBloco; j < numeroDeSwaps; j++){
 			custoInserido = - matrizAdj[solucao[j]][solucao[j+1]] + matrizAdj[solucao[i]][solucao[j]] + matrizAdj[solucao[i+tamanhoDoBloco-1]][solucao[j+1]];
 			if((custoInicial + custoRetirado + custoInserido) < custoAtual){
 				posicoes.posicaoVertice1 = i; //de onde retira
@@ -227,7 +227,6 @@ int Reinsercao(vector<int> &solucao, int custoInicial, int tamanhoDoBloco){
 
 int DoisOpt(vector<int> &solucao, int custoInicial){
 	int custoAtual = custoInicial, custoRetirado = 0, custoInserido = 0;
-	int numeroDeIteracoes = dimension - 2, numeroDeSwaps = dimension - 1;
 	bool ehMelhor = false;
 	tSwap posicoes;
 
@@ -274,69 +273,83 @@ int RVND(vector<int> &solucao, int custoDaSolucao){
 	// cout << "\t entrei ni rvnd" << endl;
 	// PrintSolucao(solucao);
 
-	for(i = 0; i < tamanhoDaSolucao; i++){
-		solucaoParcial.push_back(solucao[i]);
-	}
+	// for(i = 0; i < tamanhoDaSolucao; i++){
+	// 	solucaoParcial.push_back(solucao[i]);
+	// }
+	solucaoParcial = solucao;
 
 	custoAtual = custoDaSolucao;
 
 	while(1){
 		vizinhancaEscolhida = (int)(rand() % (vizinhanca.size()));
 		//cout << "\t entrando co case:" << vizinhanca[vizinhancaEscolhida] << endl;
-		switch(vizinhanca[vizinhancaEscolhida]){
-			case 1:
-				//cout << "rnvd comco reinserca:"<< custoDaSolucao  << endl;
-				custoAtual = Reinsercao(solucaoParcial, custoAtual, 1);
-				// cout<< "custo atual rein: " << custoAtual << endl;
-				// CustoDaSolucao(solucaoParcial);
-				// cout << "revnd fim reinerca" << endl;
-				break;
 
-			case 2:
-				//cout << "rvnd coemco swap: " << custoDaSolucao <<  endl;
-				custoAtual = Swap(solucaoParcial, custoAtual);
-				// cout<< "custo atual swa: " << custoAtual << endl;
-				// CustoDaSolucao(solucaoParcial);
-				// cout << "revnd fim swap" << endl;
-				break;
-
-			case 3:
-				//cout << "rvnd comeco dois:" << custoDaSolucao << endl;
-				custoAtual = DoisOpt(solucaoParcial, custoAtual);
-				// cout<< "custo atual dois: " << custoAtual << endl;
-				// CustoDaSolucao(solucaoParcial);
-
-				//cout << "rvns fim dois" << endl;
-				break;
-
-			case 4:
-				//cout << "rnvd comco reinserca:"<< custoDaSolucao  << endl;
-				custoAtual = Reinsercao(solucaoParcial, custoAtual, 2);
-				// cout<< "custo atual rein: " << custoAtual << endl;
-				// CustoDaSolucao(solucaoParcial);
-				// cout << "revnd fim reinerca" << endl;
-				break;
-
-			case 5: 
-				//cout << "rnvd comco reinserca:"<< custoDaSolucao  << endl;
-				custoAtual = Reinsercao(solucaoParcial, custoAtual, 3);
-				// cout<< "custo atual rein: " << custoAtual << endl;
-				// CustoDaSolucao(solucaoParcial);
-				// cout << "revnd fim reinerca" << endl;
-				break;
-
-
-			default:
-				break;
+		if(vizinhanca[vizinhancaEscolhida] == 1){
+			custoAtual = Reinsercao(solucaoParcial, custoAtual, 1);
+		}else if(vizinhanca[vizinhancaEscolhida] == 2){
+			custoAtual = Swap(solucaoParcial, custoAtual);
+		}else if(vizinhanca[vizinhancaEscolhida] == 3){
+			custoAtual = DoisOpt(solucaoParcial, custoAtual);
+		}else if(vizinhanca[vizinhancaEscolhida] == 4){
+			custoAtual = Reinsercao(solucaoParcial, custoAtual, 2);
+		}else if(vizinhanca[vizinhancaEscolhida] == 5){
+			custoAtual = Reinsercao(solucaoParcial, custoAtual, 3);
 		}
+		// switch(vizinhanca[vizinhancaEscolhida]){
+		// 	case 1:
+		// 		//cout << "rnvd comco reinserca:"<< custoDaSolucao  << endl;
+		// 		custoAtual = Reinsercao(solucaoParcial, custoAtual, 1);
+		// 		// cout<< "custo atual rein: " << custoAtual << endl;
+		// 		// CustoDaSolucao(solucaoParcial);
+		// 		// cout << "revnd fim reinerca" << endl;
+		// 		break;
+
+		// 	case 2:
+		// 		//cout << "rvnd coemco swap: " << custoDaSolucao <<  endl;
+		// 		custoAtual = Swap(solucaoParcial, custoAtual);
+		// 		// cout<< "custo atual swa: " << custoAtual << endl;
+		// 		// CustoDaSolucao(solucaoParcial);
+		// 		// cout << "revnd fim swap" << endl;
+		// 		break;
+
+		// 	case 3:
+		// 		//cout << "rvnd comeco dois:" << custoDaSolucao << endl;
+		// 		custoAtual = DoisOpt(solucaoParcial, custoAtual);
+		// 		// cout<< "custo atual dois: " << custoAtual << endl;
+		// 		// CustoDaSolucao(solucaoParcial);
+
+		// 		//cout << "rvns fim dois" << endl;
+		// 		break;
+
+		// 	case 4:
+		// 		//cout << "rnvd comco reinserca:"<< custoDaSolucao  << endl;
+		// 		custoAtual = Reinsercao(solucaoParcial, custoAtual, 2);
+		// 		// cout<< "custo atual rein: " << custoAtual << endl;
+		// 		// CustoDaSolucao(solucaoParcial);
+		// 		// cout << "revnd fim reinerca" << endl;
+		// 		break;
+
+		// 	case 5: 
+		// 		//cout << "rnvd comco reinserca:"<< custoDaSolucao  << endl;
+		// 		custoAtual = Reinsercao(solucaoParcial, custoAtual, 3);
+		// 		// cout<< "custo atual rein: " << custoAtual << endl;
+		// 		// CustoDaSolucao(solucaoParcial);
+		// 		// cout << "revnd fim reinerca" << endl;
+		// 		break;
+
+
+		// 	default:
+		// 		break;
+		// }
 
 		if(custoAtual < custoDaSolucao){
 			custoDaSolucao = custoAtual;
 
-			solucao.clear();  
+			solucao.clear();
 			solucao = solucaoParcial;
 
 			vizinhanca.clear();
+			vizinhanca.reserve(5);
 			for(i = 0; i < tamanhoVizinhanca; i++){
 				vizinhanca.push_back(i+1);
 			}
@@ -380,6 +393,9 @@ vector<int> DoubleBridge(vector<int> solucao1, int &custoDasolucaoFinal, int cus
 	vector<int> subSequenica1;
 	vector<int> subSequenica2;
 
+	subSequenica1.reserve(tamanhoSubsequencia);
+	subSequenica2.reserve(tamanhoSubsequencia);
+
 	subSequenica1.insert(subSequenica1.begin(), solucao.begin() + (tamanhoSubsequencia), solucao.begin()+(tamanhoSubsequencia + tamanhoSubsequencia));
 	subSequenica2.insert(subSequenica2.begin(), solucao.begin() + (tamanhoSubsequencia * 3), solucao.begin()+(tamanhoSubsequencia * 3 + tamanhoSubsequencia));
 
@@ -398,11 +414,7 @@ vector<int> DoubleBridge(vector<int> solucao1, int &custoDasolucaoFinal, int cus
 	custoDasolucaoFinal = custoFinal;
 
 	// PrintSolucao(solucao);
-	// CustoDaSolucao(solucao);
-
-	
-	
-	
+	// CustoDaSolucao(solucao)
 	return solucao;
 }
 
